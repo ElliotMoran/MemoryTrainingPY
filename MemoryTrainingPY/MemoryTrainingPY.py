@@ -287,7 +287,7 @@ class Game(QMainWindow):
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
 
     def picClicked(self):
-        # не работает
+        #не работает
         sender = self.sender()
         if (sender.wasClicked):
             return
