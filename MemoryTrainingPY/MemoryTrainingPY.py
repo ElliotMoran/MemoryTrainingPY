@@ -294,15 +294,15 @@ class Game(QMainWindow):
         sender.wasClicked = True
         sender.setPixmap(QPixmap(self.pics[int(sender.getName()) - 1]))
         for el in self.labels:
+            def make2Default():
+                sender.setPixmap(QPixmap("pics/default.jpg"))
+                el.setPixmap(QPixmap("pics/default.jpg"))
+                print("ok")
+
             if el == sender:
                 continue
             if el.wasClicked:
                 if self.pics[int(el.getName()) - 1] == self.pics[int(sender.getName()) - 1]:
-
-                    def make2Default():
-                        sender.setPixmap(QPixmap("pics/default.jpg"))
-                        el.setPixmap(QPixmap("pics/default.jpg"))
-
                     self.timerScreen = QTimer()
                     self.timerScreen.setSingleShot(True)
                     self.timerScreen.timeout.connect(make2Default)
@@ -310,10 +310,6 @@ class Game(QMainWindow):
                     sender.setEnabled(False)
                     el.setEnabled(False)
                 else:
-
-                    def make2Default():
-                        sender.setPixmap(QPixmap("pics/default.jpg"))
-                        el.setPixmap(QPixmap("pics/default.jpg"))
 
                     self.errors += 1
                     self.wrongsNumber.display(self.errors)
@@ -324,15 +320,22 @@ class Game(QMainWindow):
                     sender.wasClicked = False
                     el.wasClicked = False
                     
-
+    def checkAll(self):
+        for el in self.label:
+            if not el.isEnabled():
+                return False
+        return True
 
     def start(self):
-        self.makeAllOn()
         if self.firstTime:
             self.timerScreen = QTimer()
             self.timerScreen.setSingleShot(True)
             self.timerScreen.timeout.connect(self.makeAllDefault)
-            self.timerScreen.start(2000)
+            self.timerScreen.start(1999)
+            self.timerScreen1 = QTimer()
+            self.timerScreen1.setSingleShot(True)
+            self.timerScreen1.timeout.connect(self.makeAllOn)
+            self.timerScreen1.start(2000)
             self.showAll()
         self.timer.start(1000)
         self.wrongsNumber.display(self.errors)
