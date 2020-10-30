@@ -107,26 +107,13 @@ class Game(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("game.ui", self)
+
         self.setupUi()
-
-        self.pics = ["pics/auto1.jpg", "pics/auto2.jpg", "pics/auto3.jpg", "pics/auto4.jpg",
-                     "pics/auto5.jpg", "pics/auto6.jpg", "pics/auto7.jpg", "pics/auto8.jpg",
-                     "pics/auto1.jpg", "pics/auto2.jpg", "pics/auto3.jpg", "pics/auto4.jpg",
-                     "pics/auto5.jpg", "pics/auto6.jpg", "pics/auto7.jpg", "pics/auto8.jpg"]
-
-        self.labels = [self.picPart_1, self.picPart_2, self.picPart_3, self.picPart_4,
-                       self.picPart_5, self.picPart_6, self.picPart_7, self.picPart_8,
-                       self.picPart_9, self.picPart_10, self.picPart_11, self.picPart_12,
-                       self.picPart_13, self.picPart_14, self.picPart_15, self.picPart_16]
-
 
         self.errors = 0
         self.mainMenu = None
         self.firstTime = True
 
-        self.startButton.clicked.connect(self.start)
-        self.stopButton.clicked.connect(self.stop)
-        self.exitButton.clicked.connect(self.exit)
         
         self.sec = 0
         self.timer = QTimer()
@@ -134,8 +121,12 @@ class Game(QMainWindow):
         self.timer.timeout.connect(self.counter)
 
         self.random_pic()
+        self.makeAllOff()
         self.makeAllDefault()
         
+        self.startButton.clicked.connect(self.start)
+        self.stopButton.clicked.connect(self.stop)
+        self.exitButton.clicked.connect(self.exit)
 
         self.picPart_1.clicked.connect(self.picClicked)
         self.picPart_2.clicked.connect(self.picClicked)
@@ -221,66 +212,32 @@ class Game(QMainWindow):
         self.picPart_15.setName("15")
         self.picPart_16.setName("16")
 
-        self.makeAllOff()
+        self.pics = ["pics/auto1.jpg", "pics/auto2.jpg", "pics/auto3.jpg", "pics/auto4.jpg",
+                     "pics/auto5.jpg", "pics/auto6.jpg", "pics/auto7.jpg", "pics/auto8.jpg",
+                     "pics/auto1.jpg", "pics/auto2.jpg", "pics/auto3.jpg", "pics/auto4.jpg",
+                     "pics/auto5.jpg", "pics/auto6.jpg", "pics/auto7.jpg", "pics/auto8.jpg"]
+
+        self.labels = [self.picPart_1, self.picPart_2, self.picPart_3, self.picPart_4,
+                       self.picPart_5, self.picPart_6, self.picPart_7, self.picPart_8,
+                       self.picPart_9, self.picPart_10, self.picPart_11, self.picPart_12,
+                       self.picPart_13, self.picPart_14, self.picPart_15, self.picPart_16]
         
 
     def random_pic(self):
         random.shuffle(self.pics)
 
     def makeAllOn(self):
-        self.picPart_1.setEnabled(True)
-        self.picPart_2.setEnabled(True)
-        self.picPart_3.setEnabled(True)
-        self.picPart_4.setEnabled(True)
-        self.picPart_5.setEnabled(True)
-        self.picPart_6.setEnabled(True)
-        self.picPart_7.setEnabled(True)
-        self.picPart_8.setEnabled(True)
-        self.picPart_9.setEnabled(True)
-        self.picPart_10.setEnabled(True)
-        self.picPart_11.setEnabled(True)
-        self.picPart_12.setEnabled(True)
-        self.picPart_13.setEnabled(True)
-        self.picPart_14.setEnabled(True)
-        self.picPart_15.setEnabled(True)
-        self.picPart_16.setEnabled(True)
+        for el in self.labels:
+            el.setEnabled(True)
 
     def makeAllOff(self):
-        self.picPart_1.setEnabled(False)
-        self.picPart_2.setEnabled(False)
-        self.picPart_3.setEnabled(False)
-        self.picPart_4.setEnabled(False)
-        self.picPart_5.setEnabled(False)
-        self.picPart_6.setEnabled(False)
-        self.picPart_7.setEnabled(False)
-        self.picPart_8.setEnabled(False)
-        self.picPart_9.setEnabled(False)
-        self.picPart_10.setEnabled(False)
-        self.picPart_11.setEnabled(False)
-        self.picPart_12.setEnabled(False)
-        self.picPart_13.setEnabled(False)
-        self.picPart_14.setEnabled(False)
-        self.picPart_15.setEnabled(False)
-        self.picPart_16.setEnabled(False)
+        for el in self.labels:
+            el.setEnabled(False)
 
 
     def makeAllDefault(self):
-        self.picPart_1.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_2.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_3.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_4.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_5.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_6.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_7.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_8.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_9.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_10.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_11.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_12.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_13.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_14.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_15.setPixmap(QPixmap("pics/default.jpg"))
-        self.picPart_16.setPixmap(QPixmap("pics/default.jpg"))
+        for el in self.labels:
+            el.setPixmap(QPixmap("pics/default.jpg"))
 
     def showAll(self):
         for el in self.labels:
@@ -336,16 +293,17 @@ class Game(QMainWindow):
             self.timerScreen1.setSingleShot(True)
             self.timerScreen1.timeout.connect(self.makeAllOn)
             self.timerScreen1.start(2000)
+            self.wrongsNumber.display(self.errors)
             self.showAll()
+        else:
+            self.makeAllOn()
         self.timer.start(1000)
-        self.wrongsNumber.display(self.errors)
 
     def stop(self):
         self.timer.stop()
         self.firstTime = False
         self.makeAllDefault()
         self.makeAllOff()
-        self.errors = 0
 
     def counter(self):
         self.sec += 1
@@ -367,6 +325,7 @@ class Game(QMainWindow):
         self.mainMenu.show()
         self.timer.stop()
         self.sec = 0
+        self.errors = 0
         self.set_time()
         self.random_pic()
         self.makeAllDefault()
