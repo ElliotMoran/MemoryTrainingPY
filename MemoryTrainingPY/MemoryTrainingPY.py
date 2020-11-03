@@ -88,13 +88,14 @@ class WinWindow(QMainWindow):
         uic.loadUi('winWindow.ui', self)
 
         self.game = None
+        self.exitButton.clicked.connect(self.exit)
 
     def addGame(self, game):
         self.game = game
 
-    def exit():
+    def exit(self):
         self.close()
-        self.game.close()
+        self.game.exit()
 
 class MainMenu(QMainWindow):
     def __init__(self):
@@ -112,6 +113,7 @@ class MainMenu(QMainWindow):
     def startGame(self):
         self.close()
         self.game.show()
+        self.game.setEnabled(True)
 
     def addGame(self, game):
         self.game = game
@@ -231,9 +233,9 @@ class Game(QMainWindow):
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
 
     def checkAll(self):
-        for el in self.labels:
-            if el.isEnabled():
-                return False
+        #for el in self.labels:
+        #    if el.isEnabled():
+        #        return False
         return True
 
     def picClicked(self):
@@ -245,7 +247,8 @@ class Game(QMainWindow):
             minut = (self.sec % 3600) / 60
             sec = (self.sec % 3600) % 60
             self.winWindow.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
-            self.winWindow.errorsLabel.setText(self.errors)
+            self.winWindow.errorsLabel.setText(str(self.errors))
+            self.stop()
         # не работает
         sender = self.sender()
         if (sender.wasClicked):
