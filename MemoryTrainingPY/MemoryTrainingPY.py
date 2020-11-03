@@ -82,6 +82,19 @@ class Autorization(QWidget):
     def addMenu(self, menu):
         self.mainMenu = menu
 
+class WinWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('winWindow.ui', self)
+
+        self.game = None
+
+    def addGame(self, game):
+        self.game = game
+
+    def exit():
+        self.close()
+        self.game.close()
 
 class MainMenu(QMainWindow):
     def __init__(self):
@@ -112,6 +125,7 @@ class Game(QMainWindow):
 
         self.errors = 0
         self.mainMenu = None
+        self.winWindow = None
         self.firstTime = True
 
         
@@ -191,8 +205,11 @@ class Game(QMainWindow):
                        self.picPart_5, self.picPart_6, self.picPart_7, self.picPart_8,
                        self.picPart_9, self.picPart_10, self.picPart_11, self.picPart_12,
                        self.picPart_13, self.picPart_14, self.picPart_15, self.picPart_16]
-        
 
+
+    def addWinWindow(self, winWindow):
+        self.winWindow = winWindow
+        
     def random_pic(self):
         random.shuffle(self.pics)
 
@@ -215,14 +232,20 @@ class Game(QMainWindow):
 
     def checkAll(self):
         for el in self.labels:
-            if not el.isEnabled():
+            if el.isEnabled():
                 return False
         return True
 
     def picClicked(self):
         if self.checkAll():
-            # сделать вывод времени и кол-во ошибок
-            pass
+            self.winWindow.show()
+            self.winWindow.timeLabel
+            self.setEnabled(False)
+            hour = self.sec / 3600
+            minut = (self.sec % 3600) / 60
+            sec = (self.sec % 3600) % 60
+            self.winWindow.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
+            self.winWindow.errorsLabel.setText(self.errors)
         # не работает
         sender = self.sender()
         if (sender.wasClicked):
@@ -317,10 +340,16 @@ class MemoryTraining(QObject):
         self.mainMenu = MainMenu()
         self.mainMenu.show()
         self.mainMenu.setEnabled(False)
+
+        self.winWindow = WinWindow()
         
         self.game = Game()
         self.game.addMenu(self.mainMenu)
+
+        self.game.addWinWindow(self.winWindow)
+        self.winWindow.addGame(self.game)
         self.mainMenu.addGame(self.game)
+
         self.bd = dict()
         self.bd["1234"] = "1234"
 

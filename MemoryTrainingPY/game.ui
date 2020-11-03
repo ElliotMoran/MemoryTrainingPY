@@ -178,7 +178,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Wrongs:</string>
+        <string>Mistakes:</string>
        </property>
       </widget>
      </item>
