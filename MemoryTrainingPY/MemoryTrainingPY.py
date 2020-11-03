@@ -128,71 +128,41 @@ class Game(QMainWindow):
         self.stopButton.clicked.connect(self.stop)
         self.exitButton.clicked.connect(self.exit)
 
-        self.picPart_1.clicked.connect(self.picClicked)
-        self.picPart_2.clicked.connect(self.picClicked)
-        self.picPart_3.clicked.connect(self.picClicked)
-        self.picPart_4.clicked.connect(self.picClicked)
-        self.picPart_5.clicked.connect(self.picClicked)
-        self.picPart_6.clicked.connect(self.picClicked)
-        self.picPart_7.clicked.connect(self.picClicked)
-        self.picPart_8.clicked.connect(self.picClicked)
-        self.picPart_9.clicked.connect(self.picClicked)
-        self.picPart_10.clicked.connect(self.picClicked)
-        self.picPart_11.clicked.connect(self.picClicked)
-        self.picPart_12.clicked.connect(self.picClicked)
-        self.picPart_13.clicked.connect(self.picClicked)
-        self.picPart_14.clicked.connect(self.picClicked)
-        self.picPart_15.clicked.connect(self.picClicked)
-        self.picPart_16.clicked.connect(self.picClicked)
+        for el in self.labels:
+            el.clicked.connect(self.picClicked)
 
     def setupUi(self):
         self.picPart_3 = ClickedLabel()
-        self.picPart_3.setObjectName("picPart_3")
         self.gridLayout.addWidget(self.picPart_3, 0, 2, 1, 1)
         self.picPart_2 = ClickedLabel()
-        self.picPart_2.setObjectName("picPart_2")
         self.gridLayout.addWidget(self.picPart_2, 0, 1, 1, 1)
         self.picPart_5 = ClickedLabel()
-        self.picPart_5.setObjectName("picPart_5")
         self.gridLayout.addWidget(self.picPart_5, 1, 0, 1, 1)
         self.picPart_4 = ClickedLabel()
-        self.picPart_4.setObjectName("picPart_4")
         self.gridLayout.addWidget(self.picPart_4, 0, 3, 1, 1)
         self.picPart_15 = ClickedLabel()
-        self.picPart_15.setObjectName("picPart_15")
         self.gridLayout.addWidget(self.picPart_15, 3, 2, 1, 1)
         self.picPart_16 = ClickedLabel()
-        self.picPart_16.setObjectName("picPart_16")
         self.gridLayout.addWidget(self.picPart_16, 3, 3, 1, 1)
         self.picPart_14 = ClickedLabel()
-        self.picPart_14.setObjectName("picPart_14")
         self.gridLayout.addWidget(self.picPart_14, 3, 1, 1, 1)
         self.picPart_13 = ClickedLabel()
-        self.picPart_13.setObjectName("picPart_13")
         self.gridLayout.addWidget(self.picPart_13, 3, 0, 1, 1)
         self.picPart_1 = ClickedLabel()
-        self.picPart_1.setObjectName("picPart_1")
         self.gridLayout.addWidget(self.picPart_1, 0, 0, 1, 1)
         self.picPart_12 = ClickedLabel()
-        self.picPart_12.setObjectName("picPart_12")
         self.gridLayout.addWidget(self.picPart_12, 2, 3, 1, 1)
         self.picPart_9 = ClickedLabel()
-        self.picPart_9.setObjectName("picPart_9")
         self.gridLayout.addWidget(self.picPart_9, 2, 0, 1, 1)
         self.picPart_8 = ClickedLabel()
-        self.picPart_8.setObjectName("picPart_8")
         self.gridLayout.addWidget(self.picPart_8, 1, 3, 1, 1)
         self.picPart_11 = ClickedLabel()
-        self.picPart_11.setObjectName("picPart_11")
         self.gridLayout.addWidget(self.picPart_11, 2, 2, 1, 1)
         self.picPart_6 = ClickedLabel()
-        self.picPart_6.setObjectName("picPart_6")
         self.gridLayout.addWidget(self.picPart_6, 1, 1, 1, 1)
         self.picPart_7 = ClickedLabel()
-        self.picPart_7.setObjectName("picPart_7")
         self.gridLayout.addWidget(self.picPart_7, 1, 2, 1, 1)
         self.picPart_10 = ClickedLabel()
-        self.picPart_10.setObjectName("picPart_10")
         self.gridLayout.addWidget(self.picPart_10, 2, 1, 1, 1)
 
         self.picPart_1.setName("1")
@@ -243,7 +213,16 @@ class Game(QMainWindow):
         for el in self.labels:
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
 
+    def checkAll(self):
+        for el in self.labels:
+            if not el.isEnabled():
+                return False
+        return True
+
     def picClicked(self):
+        if self.checkAll():
+            # сделать вывод времени и кол-во ошибок
+            pass
         # не работает
         sender = self.sender()
         if (sender.wasClicked):
@@ -252,6 +231,8 @@ class Game(QMainWindow):
         sender.setPixmap(QPixmap(self.pics[int(sender.getName()) - 1]))
         for el in self.labels:
             def make2Default():
+                print(sender.getName())
+                print(el.getName())
                 sender.setPixmap(QPixmap("pics/default.jpg"))
                 el.setPixmap(QPixmap("pics/default.jpg"))
                 print("ok")
@@ -267,7 +248,6 @@ class Game(QMainWindow):
                     sender.setEnabled(False)
                     el.setEnabled(False)
                 else:
-
                     self.errors += 1
                     self.wrongsNumber.display(self.errors)
                     self.timerScreen = QTimer()
@@ -277,11 +257,6 @@ class Game(QMainWindow):
                     sender.wasClicked = False
                     el.wasClicked = False
                     
-    def checkAll(self):
-        for el in self.label:
-            if not el.isEnabled():
-                return False
-        return True
 
     def start(self):
         if self.firstTime:
