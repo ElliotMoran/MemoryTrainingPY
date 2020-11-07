@@ -8,24 +8,15 @@ from PyQt5.Qt import pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from collections import deque
 
-
-db = sqlite3.connect('MemoryTrainingDB.db')
-sql = db.cursor()
-
-sql.execute("""CREATE TABLE IF NOT EXISTS users(
-    login TEXT, 
-    password TEXT,
-    time BIGINT,
-    mistakes BIGINT
-)""")
-db.commit()
 
 class ClickedLabel(QLabel):
     def __init__(self):
         super().__init__()
         self.name = ""
         self.wasClicked = False
+        self.outOfGame = False
 
     clicked = pyqtSignal()
 
@@ -39,7 +30,6 @@ class ClickedLabel(QLabel):
     def getName(self):
         return self.name
 
-
 class Autorization(QWidget):
     def __init__(self):
         super().__init__()
@@ -49,12 +39,10 @@ class Autorization(QWidget):
 
         self.registerButton.clicked.connect(self.register)
         self.loginButton.clicked.connect(self.login)
+        self.userName = None
 
-#   def addDb(self, db):
-#       self.db = db
-#
-#   def getDb(sefl):
-#       return self.db
+    def getUserName():
+        return self.user_name
 
     def register(self):
         db = sqlite3.connect('MemoryTrainingDB.db')
@@ -78,11 +66,12 @@ class Autorization(QWidget):
             self.nickEdit.setText('')
             self.passEdit.setText('')
         else:
-            sql.execute(f"""SELECT LOGIN FROM users WHERE login = '{name}'""")
+            sql.execute(f"""SELECT login FROM users WHERE login = '{name}'""")
             if sql.fetchone() is None:
                 sql.execute(f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (name, password, 0, 0))
                 db.commit()
                 self.check = True
+                self.userName = name
                 self.mainMenu.setEnabled(True)
                 self.close()
             else:
@@ -94,18 +83,20 @@ class Autorization(QWidget):
         sql = db.cursor()
         sql.execute("""CREATE TABLE IF NOT EXISTS users (
             login TEXT, 
-            password TEXT 
+            password TEXT,
+            time BIGINT,
+            mistakes BIGINT
         )""")
         db.commit()
 
         name = self.nickEdit.text()
         password = self.passEdit.text()
 
-        sql.execute(f"""SELECT LOGIN FROM users WHERE login = '{name}'""")
+        sql.execute(f"""SELECT login FROM users WHERE login = '{name}'""")
         if sql.fetchone() is None:
             self.warningLabel.setText('User is not registered')
         else:
-            sql.execute(f"""SELECT LOGIN FROM users WHERE password = '{password}'""")
+            sql.execute(f"""SELECT password FROM users WHERE password = '{password}' AND login = '{name}'""")
             if sql.fetchone() is None:
                 self.warningLabel.setText('Wrong password!')
                 self.passEdit.setText('')
@@ -142,8 +133,16 @@ class MainMenu(QMainWindow):
         
         self.game = None
 
+        self.changePasswordButton.hide()
+        self.returnButton.hide()
+        self.frame.hide()
+
         self.startButton.clicked.connect(self.startGame)
         self.exitButton.clicked.connect(self.exit)
+        self.settingsButton.clicked.connect(self.showSettings)
+        self.changePasswordButton.clicked.connect(self.changePass)
+        self.returnButton.clicked.connect(self.showMainButtons)
+        self.ratingButton.clicked.connect(self.showRating)
 
     def exit(self):
         sys.exit()
@@ -156,10 +155,40 @@ class MainMenu(QMainWindow):
     def addGame(self, game):
         self.game = game
 
+    def showRating(self):
+        self.startButton.hide()
+        self.settingsButton.hide()
+        self.ratingButton.hide()
+        self.exitButton.hide()
+        self.frame.show()
+        self.returnButton.show()
+
+    def showSettings(self):
+        self.changePasswordButton.show()
+        self.returnButton.show()
+        self.startButton.hide()
+        self.settingsButton.hide()
+        self.ratingButton.hide()
+        self.exitButton.hide()
+
+    def showMainButtons(self):
+        self.changePasswordButton.hide()
+        self.frame.hide()
+        self.returnButton.hide()
+        self.startButton.show()
+        self.settingsButton.show()
+        self.ratingButton.show()
+        self.exitButton.show()
+
+    def changePass(self):
+        pass
+
 class Game(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("game.ui", self)
+
+        self.queue = deque()
 
         self.setupUi()
 
@@ -245,6 +274,24 @@ class Game(QMainWindow):
                        self.picPart_9, self.picPart_10, self.picPart_11, self.picPart_12,
                        self.picPart_13, self.picPart_14, self.picPart_15, self.picPart_16]
 
+        for el in self.labels:
+                el.hide()
+
+    def reconnect(self, signal, newhandler=None, oldhandler=None):
+        while True:
+            try:
+                if oldhandler is not None:
+                    signal.disconnect(oldhandler)
+                else:
+                    signal.disconnect()
+            except TypeError:
+                break
+        if newhandler is not None:
+            signal.connect(newhandler)
+
+    def nothing(self):
+        pass
+
 
     def addWinWindow(self, winWindow):
         self.winWindow = winWindow
@@ -254,11 +301,11 @@ class Game(QMainWindow):
 
     def makeAllOn(self):
         for el in self.labels:
-            el.setEnabled(True)
+            self.reconnect(el.clicked, self.picClicked)
 
     def makeAllOff(self):
         for el in self.labels:
-            el.setEnabled(False)
+            self.reconnect(el.clicked, self.nothing)
 
 
     def makeAllDefault(self):
@@ -270,12 +317,54 @@ class Game(QMainWindow):
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
 
     def checkAll(self):
-        #for el in self.labels:
-        #    if el.isEnabled():
-        #        return False
+        for el in self.labels:
+            if not el.outOfGame:
+                return False
         return True
 
+    def make2Default(self, el1, el2):
+        def func():
+            for el in self.labels:
+                self.reconnect(el.clicked, self.picClicked)
+                if el.outOfGame:
+                    self.reconnect(el.clicked, self.nothing)
+                    el.hide()
+            el1.setPixmap(QPixmap("pics/default.jpg"))
+            el2.setPixmap(QPixmap("pics/default.jpg"))
+        return func
+
     def picClicked(self):
+        sender = self.sender()
+        if sender.wasClicked:
+            return
+        sender.wasClicked = True
+        sender.setPixmap(QPixmap(self.pics[int(sender.getName()) - 1]))
+        for el in self.labels:
+            if sender == el:
+                continue
+            if el.wasClicked:
+                if self.pics[int(sender.getName()) - 1] == self.pics[int(el.getName()) - 1]:
+                    self.makeAllOff()
+                    self.timerScreen = QTimer()
+                    self.timerScreen.setSingleShot(True)
+                    self.timerScreen.timeout.connect(self.make2Default(el, sender))
+                    self.timerScreen.start(1500)
+                    sender.wasClicked = False
+                    el.wasClicked = False
+                    sender.outOfGame = True
+                    el.outOfGame = True
+                else:
+                    self.makeAllOff()
+                    self.timerScreen = QTimer()
+                    self.timerScreen.setSingleShot(True)
+                    self.timerScreen.timeout.connect(self.make2Default(el, sender))
+                    self.timerScreen.start(1500)
+                    sender.wasClicked = False
+                    el.wasClicked = False
+                    self.errors += 1
+                    self.wrongsNumber.display(self.errors)
+
+
         if self.checkAll():
             self.winWindow.show()
             self.winWindow.timeLabel
@@ -286,51 +375,21 @@ class Game(QMainWindow):
             self.winWindow.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
             self.winWindow.errorsLabel.setText(str(self.errors))
             self.stop()
-        # не работает
-        sender = self.sender()
-        if (sender.wasClicked):
-            return
-        sender.wasClicked = True
-        sender.setPixmap(QPixmap(self.pics[int(sender.getName()) - 1]))
-        for el in self.labels:
-            def make2Default():
-                print(sender.getName())
-                print(el.getName())
-                sender.setPixmap(QPixmap("pics/default.jpg"))
-                el.setPixmap(QPixmap("pics/default.jpg"))
-                print("ok")
-
-            if el == sender:
-                continue
-            if el.wasClicked:
-                if self.pics[int(el.getName()) - 1] == self.pics[int(sender.getName()) - 1]:
-                    self.timerScreen = QTimer()
-                    self.timerScreen.setSingleShot(True)
-                    self.timerScreen.timeout.connect(make2Default)
-                    self.timerScreen.start(1000)
-                    sender.setEnabled(False)
-                    el.setEnabled(False)
-                else:
-                    self.errors += 1
-                    self.wrongsNumber.display(self.errors)
-                    self.timerScreen = QTimer()
-                    self.timerScreen.setSingleShot(True)
-                    self.timerScreen.timeout.connect(make2Default)
-                    self.timerScreen.start(1000)
-                    sender.wasClicked = False
-                    el.wasClicked = False
                     
 
     def start(self):
         if self.firstTime:
+            self.firstTime = False
+            for el in self.labels:
+                el.show()
             self.timerScreen = QTimer()
             self.timerScreen.setSingleShot(True)
             self.timerScreen.timeout.connect(self.makeAllDefault)
-            self.timerScreen.start(1999)
+            self.timerScreen.start(4999)
             self.timerScreen1 = QTimer()
             self.timerScreen1.setSingleShot(True)
             self.timerScreen1.timeout.connect(self.makeAllOn)
-            self.timerScreen1.start(2000)
+            self.timerScreen1.start(5000)
             self.wrongsNumber.display(self.errors)
             self.showAll()
         else:
@@ -358,6 +417,10 @@ class Game(QMainWindow):
 
     def exit(self):
         self.stop()
+        for el in self.labels:
+                el.hide()
+                el.outOfGame = False
+                el.wasClicked = False
         self.firstTime = True
         self.random_pic()
         self.mainMenu.show()
@@ -392,7 +455,6 @@ class MemoryTraining(QObject):
 
         self.autorization = Autorization()
         self.autorization.addMenu(self.mainMenu)
-#       self.autorization.addDb(self.db)
         self.autorization.show()
 
 if __name__ == '__main__':
