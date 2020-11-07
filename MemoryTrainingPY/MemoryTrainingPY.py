@@ -1,13 +1,25 @@
 import sys
+import random
+import sqlite3
 
-from PIL import Image
+
 from PyQt5 import uic
+from PyQt5.Qt import pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.Qt import pyqtSignal
-import random
 
+
+db = sqlite3.connect('MemoryTrainingDB.db')
+sql = db.cursor()
+
+sql.execute("""CREATE TABLE IF NOT EXISTS users(
+    login TEXT, 
+    password TEXT,
+    time BIGINT,
+    mistakes BIGINT
+)""")
+db.commit()
 
 class ClickedLabel(QLabel):
     def __init__(self):
@@ -33,48 +45,74 @@ class Autorization(QWidget):
         super().__init__()
         uic.loadUi('authorization.ui', self)
         self.mainMenu = None
-        self.bd = dict()
         self.check = False
 
         self.registerButton.clicked.connect(self.register)
         self.loginButton.clicked.connect(self.login)
 
-    def addBd(self, bd):
-        self.bd = bd
-
-    def getBd(sefl):
-        return self.bd
+#   def addDb(self, db):
+#       self.db = db
+#
+#   def getDb(sefl):
+#       return self.db
 
     def register(self):
+        db = sqlite3.connect('MemoryTrainingDB.db')
+        sql = db.cursor()
+
+        sql.execute("""CREATE TABLE IF NOT EXISTS users(
+            login TEXT, 
+            password TEXT,
+            time BIGINT,
+            mistakes BIGINT
+        )""")
+        db.commit()
         name = self.nickEdit.text()
         password = self.passEdit.text()
-        if (name in self.bd.keys()):
-            if (len(name) < 4 and len(password) < 4):
-                self.warningLabel.setText("Short Nickname or password")
-            else:
-                self.warningLabel.setText("Username is taken!")
+        if len(name) < 6:
+            self.warningLabel.setText('Too small login!')
+            self.nickEdit.setText('')
+            self.passEdit.setText('')
+        elif len(password) < 6:
+            self.warningLabel.setText('Too small password!')
+            self.nickEdit.setText('')
+            self.passEdit.setText('')
         else:
-            if (len(name) < 4 and len(password) < 4):
-                self.warningLabel.setText("Short Nickname or password")
-            else:
-                self.bd[name] = password
+            sql.execute(f"""SELECT LOGIN FROM users WHERE login = '{name}'""")
+            if sql.fetchone() is None:
+                sql.execute(f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (name, password, 0, 0))
+                db.commit()
+                self.check = True
                 self.mainMenu.setEnabled(True)
                 self.close()
-                return True
+            else:
+                self.warningLabel.setText('User is already registered!')
+
 
     def login(self):
+        db = sqlite3.connect('MemoryTrainingDB.db')
+        sql = db.cursor()
+        sql.execute("""CREATE TABLE IF NOT EXISTS users (
+            login TEXT, 
+            password TEXT 
+        )""")
+        db.commit()
+
         name = self.nickEdit.text()
         password = self.passEdit.text()
-        if (name in self.bd.keys() and len(name) > 3):
-            if (self.bd[name] != password and len(password) < 4):
-                self.warningLabel.setText("Wrong Password!")
+
+        sql.execute(f"""SELECT LOGIN FROM users WHERE login = '{name}'""")
+        if sql.fetchone() is None:
+            self.warningLabel.setText('User is not registered')
+        else:
+            sql.execute(f"""SELECT LOGIN FROM users WHERE password = '{password}'""")
+            if sql.fetchone() is None:
+                self.warningLabel.setText('Wrong password!')
+                self.passEdit.setText('')
             else:
-                self.chek = True
+                self.check = True
                 self.mainMenu.setEnabled(True)
                 self.close()
-        else:
-            self.warningLabel.setText("Wrong Nickname!")
-
 
     def checkAutorization(self):
         return self.check
@@ -148,39 +186,38 @@ class Game(QMainWindow):
             el.clicked.connect(self.picClicked)
 
     def setupUi(self):
-        self.picPart_3 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_3, 0, 2, 1, 1)
-        self.picPart_2 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_2, 0, 1, 1, 1)
-        self.picPart_5 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_5, 1, 0, 1, 1)
-        self.picPart_4 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_4, 0, 3, 1, 1)
-        self.picPart_15 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_15, 3, 2, 1, 1)
-        self.picPart_16 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_16, 3, 3, 1, 1)
-        self.picPart_14 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_14, 3, 1, 1, 1)
-        self.picPart_13 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_13, 3, 0, 1, 1)
         self.picPart_1 = ClickedLabel()
         self.gridLayout.addWidget(self.picPart_1, 0, 0, 1, 1)
-        self.picPart_12 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_12, 2, 3, 1, 1)
-        self.picPart_9 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_9, 2, 0, 1, 1)
-        self.picPart_8 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_8, 1, 3, 1, 1)
-        self.picPart_11 = ClickedLabel()
-        self.gridLayout.addWidget(self.picPart_11, 2, 2, 1, 1)
+        self.picPart_2 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_2, 0, 1, 1, 1)
+        self.picPart_3 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_3, 0, 2, 1, 1)
+        self.picPart_4 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_4, 0, 3, 1, 1)
+        self.picPart_5 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_5, 1, 0, 1, 1)
         self.picPart_6 = ClickedLabel()
         self.gridLayout.addWidget(self.picPart_6, 1, 1, 1, 1)
         self.picPart_7 = ClickedLabel()
         self.gridLayout.addWidget(self.picPart_7, 1, 2, 1, 1)
+        self.picPart_8 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_8, 1, 3, 1, 1)
+        self.picPart_9 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_9, 2, 0, 1, 1)
         self.picPart_10 = ClickedLabel()
         self.gridLayout.addWidget(self.picPart_10, 2, 1, 1, 1)
-
+        self.picPart_11 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_11, 2, 2, 1, 1)
+        self.picPart_12 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_12, 2, 3, 1, 1)
+        self.picPart_13 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_13, 3, 0, 1, 1)
+        self.picPart_14 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_14, 3, 1, 1, 1)
+        self.picPart_15 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_15, 3, 2, 1, 1)
+        self.picPart_16 = ClickedLabel()
+        self.gridLayout.addWidget(self.picPart_16, 3, 3, 1, 1)
         self.picPart_1.setName("1")
         self.picPart_2.setName("2")
         self.picPart_3.setName("3")
@@ -353,12 +390,9 @@ class MemoryTraining(QObject):
         self.winWindow.addGame(self.game)
         self.mainMenu.addGame(self.game)
 
-        self.bd = dict()
-        self.bd["1234"] = "1234"
-
         self.autorization = Autorization()
         self.autorization.addMenu(self.mainMenu)
-        self.autorization.addBd(self.bd)
+#       self.autorization.addDb(self.db)
         self.autorization.show()
 
 if __name__ == '__main__':
