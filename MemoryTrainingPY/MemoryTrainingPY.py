@@ -90,6 +90,7 @@ class Autorization(QWidget):
         db.commit()
 
         name = self.nickEdit.text()
+        self.userName = name
         password = self.passEdit.text()
 
         sql.execute(f"""SELECT login FROM users WHERE login = '{name}'""")
@@ -134,6 +135,8 @@ class MainMenu(QMainWindow):
         self.setFixedSize(1280, 720)
         
         self.game = None
+        self.userName = None
+        self.autorization = None
 
         self.changePasswordButton.hide()
         self.returnButton.hide()
@@ -146,7 +149,11 @@ class MainMenu(QMainWindow):
         self.returnButton.clicked.connect(self.showMainButtons)
         self.ratingButton.clicked.connect(self.showRating)
         self.changePasswordButton.clicked.connect(self.showPassChange)
+        self.acceptButton.clicked.connect(self.passChange)
 
+
+    def addAuto(self, auto):
+        self.autorization = auto
 
     def exit(self):
         sys.exit()
@@ -159,18 +166,43 @@ class MainMenu(QMainWindow):
     def addGame(self, game):
         self.game = game
 
+    def passChange(self):
+        self.userName = self.autorization.getUserName()
+        db = sqlite3.connect('MemoryTrainingDB.db')
+        sql = db.cursor()
+        userPassword = self.newPasswordEdit.text()
+        if len(userPassword) > 5:
+            sql.execute(f"""UPDATE users SET password = '{userPassword}' WHERE login = '{self.userName}'""")
+            db.commit()
+        else:
+            self.errorsPasswordLabel.setText('Less than 6 symbols')
+
     def showPassChange(self):
         self.changePasswordButton.hide()
         self.frameNewPassword.show()
         self.returnButton.show()
 
     def showRating(self):
+        self.userName = self.autorization.getUserName()
         self.startButton.hide()
         self.settingsButton.hide()
         self.ratingButton.hide()
         self.exitButton.hide()
         self.frameRating.show()
         self.returnButton.show()
+        db = sqlite3.connect('MemoryTrainingDB.db')
+        sql = db.cursor()
+        sql.execute(f"SELECT time FROM users WHERE login = '{self.userName}'")
+        bestTime = sql.fetchone()
+        bestTime = int(list(bestTime)[0])
+        sql.execute(f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
+        bestErrors = sql.fetchone()
+        bestErrors = int(list(bestErrors)[0])
+        hour = bestTime / 3600
+        minut = (bestTime % 3600) / 60
+        sec = (bestTime % 3600) % 60
+        self.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
+        self.errorsLabel.setText(str(bestErrors))
 
     def showSettings(self):
         self.changePasswordButton.show()
@@ -325,7 +357,6 @@ class Game(QMainWindow):
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
 
     def checkAll(self):
-        return True
         for el in self.labels:
             if not el.outOfGame:
                 return False
@@ -375,8 +406,8 @@ class Game(QMainWindow):
                     self.errors += 1
                     self.wrongsNumber.display(self.errors)
 
-
         if self.checkAll():
+            self.userName = self.mainMenu.autorization.getUserName()
             self.winWindow.show()
             self.setEnabled(False)
             hour = self.sec / 3600
@@ -388,21 +419,22 @@ class Game(QMainWindow):
             db = sqlite3.connect('MemoryTrainingDB.db')
             sql = db.cursor()
             sql.execute(f"SELECT time FROM users WHERE login = '{self.userName}'")
-            db.commit()
             bestTime = sql.fetchone()
+            bestTime = int(list(bestTime)[0])
             sql.execute(f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
-            db.commit()
             bestErrors = sql.fetchone()
-            if bestTime is None:
+            bestErrors = int(list(bestErrors)[0])
+            if 0 == bestTime:
                 sql.execute(f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
                 db.commit()
-            if bestErrors is None:
+            if 0 == bestErrors:
                 sql.execute(f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
                 db.commit()
-            sql.execute(f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
-            bestTime = sql.fetchall()
-            print(bestTime)
-
+            if 1000 - bestTime - bestErrors * 5 < 1000 - self.sec - self.errors * 5:
+                sql.execute(f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
+                db.commit()
+                sql.execute(f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
+                db.commit()
             self.stop()
                     
 
@@ -487,7 +519,7 @@ class MemoryTraining(QObject):
         self.autorization = Autorization()
         self.autorization.addMenu(self.mainMenu)
         self.autorization.show()
-        self.game.userName = self.autorization.getUserName()
+        self.mainMenu.addAuto(self.autorization)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
