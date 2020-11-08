@@ -43,7 +43,8 @@ class Autorization(QWidget):
 
     def getUserName(self):
         return self.userName
-
+    
+    #регистрация
     def register(self):
         db = sqlite3.connect('MemoryTrainingDB.db')
         sql = db.cursor()
@@ -76,7 +77,6 @@ class Autorization(QWidget):
                 self.close()
             else:
                 self.warningLabel.setText('User is already registered!')
-
 
     def login(self):
         db = sqlite3.connect('MemoryTrainingDB.db')
@@ -157,7 +157,7 @@ class MainMenu(QMainWindow):
 
     def exit(self):
         sys.exit()
-
+    
     def startGame(self):
         self.close()
         self.game.show()
@@ -165,7 +165,8 @@ class MainMenu(QMainWindow):
 
     def addGame(self, game):
         self.game = game
-
+    
+    #смена пароля
     def passChange(self):
         self.userName = self.autorization.getUserName()
         db = sqlite3.connect('MemoryTrainingDB.db')
@@ -176,12 +177,14 @@ class MainMenu(QMainWindow):
             db.commit()
         else:
             self.errorsPasswordLabel.setText('Less than 6 symbols')
-
+    
+    #показ кнопок смены пароля
     def showPassChange(self):
         self.changePasswordButton.hide()
         self.frameNewPassword.show()
         self.returnButton.show()
-
+    
+    #показ рейтинга
     def showRating(self):
         self.userName = self.autorization.getUserName()
         self.startButton.hide()
@@ -203,7 +206,8 @@ class MainMenu(QMainWindow):
         sec = (bestTime % 3600) % 60
         self.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
         self.errorsLabel.setText(str(bestErrors))
-
+    
+    #показ кнопок настроек
     def showSettings(self):
         self.changePasswordButton.show()
         self.returnButton.show()
@@ -212,6 +216,7 @@ class MainMenu(QMainWindow):
         self.ratingButton.hide()
         self.exitButton.hide()
 
+    #показ основных кнопок
     def showMainButtons(self):
         self.changePasswordButton.hide()
         self.frameRating.hide()
@@ -316,7 +321,8 @@ class Game(QMainWindow):
 
         for el in self.labels:
                 el.hide()
-
+    
+    #сделал так как при setEnabled(False) виджеты окрашивются в серый, а замена на функцию nothing() это исправляет
     def reconnect(self, signal, newhandler=None, oldhandler=None):
         while True:
             try:
@@ -329,6 +335,7 @@ class Game(QMainWindow):
         if newhandler is not None:
             signal.connect(newhandler)
 
+    #пустая функция чтобы реализовать аналог setEnabled(False)
     def nothing(self):
         pass
 
@@ -339,29 +346,34 @@ class Game(QMainWindow):
     def random_pic(self):
         random.shuffle(self.pics)
 
+    #замена всех picLabel на работающую функцию
     def makeAllOn(self):
         for el in self.labels:
             self.reconnect(el.clicked, self.picClicked)
-
+    
+    #замена всех picLabel на пустую функцию
     def makeAllOff(self):
         for el in self.labels:
             self.reconnect(el.clicked, self.nothing)
 
-
+    #замена всех картинок picLabel на дефолтную
     def makeAllDefault(self):
         for el in self.labels:
             el.setPixmap(QPixmap("pics/default.jpg"))
 
+    #замена всех picLabel на их картинки
     def showAll(self):
         for el in self.labels:
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
-
+    
+    #проверка все ли картинки были найдены
     def checkAll(self):
         for el in self.labels:
             if not el.outOfGame:
                 return False
         return True
 
+    #показ 2 нажатых картинок и смена их на дефолтные
     def make2Default(self, el1, el2):
         def func():
             for el in self.labels:
@@ -375,6 +387,7 @@ class Game(QMainWindow):
                 el2.setPixmap(QPixmap("pics/default.jpg"))
         return func
 
+    #функция выполняется если нажата picLabel
     def picClicked(self):
         sender = self.sender()
         if sender.wasClicked:
