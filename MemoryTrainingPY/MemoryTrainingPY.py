@@ -468,6 +468,10 @@ class Game(QMainWindow):
             self.showAll()
         else:
             self.makeAllOn()
+            for el in self.labels:
+                if el.outOfGame:
+                    self.reconnect(el.clicked, self.nothing)
+                    el.setPixmap(QPixmap("pics/outofgame.jpg"))
         self.timer.start(1000)
 
     def stop(self):
