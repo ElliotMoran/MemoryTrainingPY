@@ -10,6 +10,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
+# класс для картинок в игре(переписанный QLabel)
 class ClickedLabel(QLabel):
     def __init__(self):
         super().__init__()
@@ -29,7 +30,7 @@ class ClickedLabel(QLabel):
     def getName(self):
         return self.name
 
-
+# окно авторизации
 class Autorization(QWidget):
     def __init__(self):
         super().__init__()
@@ -116,6 +117,7 @@ class Autorization(QWidget):
         self.mainMenu = menu
 
 
+# окно при завершении игры
 class WinWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -133,6 +135,7 @@ class WinWindow(QMainWindow):
         self.game.exit()
 
 
+# окно главного меню
 class MainMenu(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -234,6 +237,7 @@ class MainMenu(QMainWindow):
         self.exitButton.show()
 
 
+# окно игры
 class Game(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -328,7 +332,7 @@ class Game(QMainWindow):
         for el in self.labels:
             el.hide()
 
-    # сделал так как при setEnabled(False) виджеты окрашивются в серый, а замена на функцию nothing() это исправляет
+    # сделал так, так как при setEnabled(False) виджеты окрашивются в серый, а замена на функцию nothing() это исправляет
     def reconnect(self, signal, newhandler=None, oldhandler=None):
         while True:
             try:
@@ -348,6 +352,7 @@ class Game(QMainWindow):
     def addWinWindow(self, winWindow):
         self.winWindow = winWindow
 
+    # перемешивание картинок
     def random_pic(self):
         random.shuffle(self.pics)
 
@@ -392,7 +397,7 @@ class Game(QMainWindow):
                 el2.setPixmap(QPixmap("pics/default.jpg"))
         return func
 
-    # функция выполняется если нажата picLabel
+    # функция выполняется если нажата picLabel(картинка)
     def picClicked(self):
         sender = self.sender()
         if sender.wasClicked:
@@ -426,6 +431,7 @@ class Game(QMainWindow):
                     self.errors += 1
                     self.wrongsNumber.display(self.errors)
 
+        # если все пары были найдены
         if self.checkAll():
             self.userName = self.mainMenu.autorization.getUserName()
             self.winWindow.show()
@@ -464,7 +470,9 @@ class Game(QMainWindow):
                 db.commit()
             self.stop()
 
+    # кнопка старта
     def start(self):
+        # если кнопка была нажата впервый раз
         if self.firstTime:
             self.firstTime = False
             for el in self.labels:
@@ -530,6 +538,7 @@ class Game(QMainWindow):
         self.mainMenu = mainMenu
 
 
+# класс объединяющий все остальные
 class MemoryTraining(QObject):
     def __init__(self):
         super().__init__()
