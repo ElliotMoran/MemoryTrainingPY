@@ -29,6 +29,7 @@ class ClickedLabel(QLabel):
     def getName(self):
         return self.name
 
+
 class Autorization(QWidget):
     def __init__(self):
         super().__init__()
@@ -43,8 +44,8 @@ class Autorization(QWidget):
 
     def getUserName(self):
         return self.userName
-    
-    #регистрация
+
+    # регистрация
     def register(self):
         db = sqlite3.connect('MemoryTrainingDB.db')
         sql = db.cursor()
@@ -69,7 +70,8 @@ class Autorization(QWidget):
         else:
             sql.execute(f"""SELECT login FROM users WHERE login = '{name}'""")
             if sql.fetchone() is None:
-                sql.execute(f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (name, password, 0, 0))
+                sql.execute(
+                    f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (name, password, 0, 0))
                 db.commit()
                 self.check = True
                 self.userName = name
@@ -97,7 +99,8 @@ class Autorization(QWidget):
         if sql.fetchone() is None:
             self.warningLabel.setText('User is not registered')
         else:
-            sql.execute(f"""SELECT password FROM users WHERE password = '{password}' AND login = '{name}'""")
+            sql.execute(
+                f"""SELECT password FROM users WHERE password = '{password}' AND login = '{name}'""")
             if sql.fetchone() is None:
                 self.warningLabel.setText('Wrong password!')
                 self.passEdit.setText('')
@@ -111,6 +114,7 @@ class Autorization(QWidget):
 
     def addMenu(self, menu):
         self.mainMenu = menu
+
 
 class WinWindow(QMainWindow):
     def __init__(self):
@@ -128,12 +132,13 @@ class WinWindow(QMainWindow):
         self.close()
         self.game.exit()
 
+
 class MainMenu(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('mainMenu.ui', self)
         self.setFixedSize(1280, 720)
-        
+
         self.game = None
         self.userName = None
         self.autorization = None
@@ -151,13 +156,12 @@ class MainMenu(QMainWindow):
         self.changePasswordButton.clicked.connect(self.showPassChange)
         self.acceptButton.clicked.connect(self.passChange)
 
-
     def addAuto(self, auto):
         self.autorization = auto
 
     def exit(self):
         sys.exit()
-    
+
     def startGame(self):
         self.close()
         self.game.show()
@@ -165,26 +169,27 @@ class MainMenu(QMainWindow):
 
     def addGame(self, game):
         self.game = game
-    
-    #смена пароля
+
+    # смена пароля
     def passChange(self):
         self.userName = self.autorization.getUserName()
         db = sqlite3.connect('MemoryTrainingDB.db')
         sql = db.cursor()
         userPassword = self.newPasswordEdit.text()
         if len(userPassword) > 5:
-            sql.execute(f"""UPDATE users SET password = '{userPassword}' WHERE login = '{self.userName}'""")
+            sql.execute(
+                f"""UPDATE users SET password = '{userPassword}' WHERE login = '{self.userName}'""")
             db.commit()
         else:
             self.errorsPasswordLabel.setText('Less than 6 symbols')
-    
-    #показ кнопок смены пароля
+
+    # показ кнопок смены пароля
     def showPassChange(self):
         self.changePasswordButton.hide()
         self.frameNewPassword.show()
         self.returnButton.show()
-    
-    #показ рейтинга
+
+    # показ рейтинга
     def showRating(self):
         self.userName = self.autorization.getUserName()
         self.startButton.hide()
@@ -198,7 +203,8 @@ class MainMenu(QMainWindow):
         sql.execute(f"SELECT time FROM users WHERE login = '{self.userName}'")
         bestTime = sql.fetchone()
         bestTime = int(list(bestTime)[0])
-        sql.execute(f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
+        sql.execute(
+            f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
         bestErrors = sql.fetchone()
         bestErrors = int(list(bestErrors)[0])
         hour = bestTime / 3600
@@ -206,8 +212,8 @@ class MainMenu(QMainWindow):
         sec = (bestTime % 3600) % 60
         self.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
         self.errorsLabel.setText(str(bestErrors))
-    
-    #показ кнопок настроек
+
+    # показ кнопок настроек
     def showSettings(self):
         self.changePasswordButton.show()
         self.returnButton.show()
@@ -216,7 +222,7 @@ class MainMenu(QMainWindow):
         self.ratingButton.hide()
         self.exitButton.hide()
 
-    #показ основных кнопок
+    # показ основных кнопок
     def showMainButtons(self):
         self.changePasswordButton.hide()
         self.frameRating.hide()
@@ -227,12 +233,13 @@ class MainMenu(QMainWindow):
         self.ratingButton.show()
         self.exitButton.show()
 
+
 class Game(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("game.ui", self)
         self.setFixedSize(1280, 720)
-        
+
         self.userName = None
 
         self.setupUi()
@@ -242,7 +249,6 @@ class Game(QMainWindow):
         self.winWindow = None
         self.firstTime = True
 
-        
         self.sec = 0
         self.timer = QTimer()
         self.set_time()
@@ -251,7 +257,7 @@ class Game(QMainWindow):
         self.random_pic()
         self.makeAllOff()
         self.makeAllDefault()
-        
+
         self.startButton.clicked.connect(self.start)
         self.stopButton.clicked.connect(self.stop)
         self.exitButton.clicked.connect(self.exit)
@@ -320,9 +326,9 @@ class Game(QMainWindow):
                        self.picPart_13, self.picPart_14, self.picPart_15, self.picPart_16]
 
         for el in self.labels:
-                el.hide()
-    
-    #сделал так как при setEnabled(False) виджеты окрашивются в серый, а замена на функцию nothing() это исправляет
+            el.hide()
+
+    # сделал так как при setEnabled(False) виджеты окрашивются в серый, а замена на функцию nothing() это исправляет
     def reconnect(self, signal, newhandler=None, oldhandler=None):
         while True:
             try:
@@ -335,45 +341,44 @@ class Game(QMainWindow):
         if newhandler is not None:
             signal.connect(newhandler)
 
-    #пустая функция чтобы реализовать аналог setEnabled(False)
+    # пустая функция чтобы реализовать аналог setEnabled(False)
     def nothing(self):
         pass
 
-
     def addWinWindow(self, winWindow):
         self.winWindow = winWindow
-        
+
     def random_pic(self):
         random.shuffle(self.pics)
 
-    #замена всех picLabel на работающую функцию
+    # замена всех picLabel на работающую функцию
     def makeAllOn(self):
         for el in self.labels:
             self.reconnect(el.clicked, self.picClicked)
-    
-    #замена всех picLabel на пустую функцию
+
+    # замена всех picLabel на пустую функцию
     def makeAllOff(self):
         for el in self.labels:
             self.reconnect(el.clicked, self.nothing)
 
-    #замена всех картинок picLabel на дефолтную
+    # замена всех картинок picLabel на дефолтную
     def makeAllDefault(self):
         for el in self.labels:
             el.setPixmap(QPixmap("pics/default.jpg"))
 
-    #замена всех picLabel на их картинки
+    # замена всех picLabel на их картинки
     def showAll(self):
         for el in self.labels:
             el.setPixmap(QPixmap(self.pics[int(el.getName()) - 1]))
-    
-    #проверка все ли картинки были найдены
+
+    # проверка все ли картинки были найдены
     def checkAll(self):
         for el in self.labels:
             if not el.outOfGame:
                 return False
         return True
 
-    #показ 2 нажатых картинок и смена их на дефолтные
+    # показ 2 нажатых картинок и смена их на дефолтные
     def make2Default(self, el1, el2):
         def func():
             for el in self.labels:
@@ -387,7 +392,7 @@ class Game(QMainWindow):
                 el2.setPixmap(QPixmap("pics/default.jpg"))
         return func
 
-    #функция выполняется если нажата picLabel
+    # функция выполняется если нажата picLabel
     def picClicked(self):
         sender = self.sender()
         if sender.wasClicked:
@@ -402,7 +407,8 @@ class Game(QMainWindow):
                     self.makeAllOff()
                     self.timerScreen = QTimer()
                     self.timerScreen.setSingleShot(True)
-                    self.timerScreen.timeout.connect(self.make2Default(el, sender))
+                    self.timerScreen.timeout.connect(
+                        self.make2Default(el, sender))
                     self.timerScreen.start(1500)
                     sender.wasClicked = False
                     el.wasClicked = False
@@ -412,7 +418,8 @@ class Game(QMainWindow):
                     self.makeAllOff()
                     self.timerScreen = QTimer()
                     self.timerScreen.setSingleShot(True)
-                    self.timerScreen.timeout.connect(self.make2Default(el, sender))
+                    self.timerScreen.timeout.connect(
+                        self.make2Default(el, sender))
                     self.timerScreen.start(1500)
                     sender.wasClicked = False
                     el.wasClicked = False
@@ -426,30 +433,36 @@ class Game(QMainWindow):
             hour = self.sec / 3600
             minut = (self.sec % 3600) / 60
             sec = (self.sec % 3600) % 60
-            self.winWindow.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
+            self.winWindow.timeLabel.setText(
+                "%02d:%02d:%02d" % (hour, minut, sec))
             self.winWindow.errorsLabel.setText(str(self.errors))
 
             db = sqlite3.connect('MemoryTrainingDB.db')
             sql = db.cursor()
-            sql.execute(f"SELECT time FROM users WHERE login = '{self.userName}'")
+            sql.execute(
+                f"SELECT time FROM users WHERE login = '{self.userName}'")
             bestTime = sql.fetchone()
             bestTime = int(list(bestTime)[0])
-            sql.execute(f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
+            sql.execute(
+                f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
             bestErrors = sql.fetchone()
             bestErrors = int(list(bestErrors)[0])
             if 0 == bestTime:
-                sql.execute(f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
+                sql.execute(
+                    f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
                 db.commit()
             if 0 == bestErrors:
-                sql.execute(f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
+                sql.execute(
+                    f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
                 db.commit()
             if 1000 - bestTime - bestErrors * 5 < 1000 - self.sec - self.errors * 5:
-                sql.execute(f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
+                sql.execute(
+                    f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
                 db.commit()
-                sql.execute(f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
+                sql.execute(
+                    f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
                 db.commit()
             self.stop()
-                    
 
     def start(self):
         if self.firstTime:
@@ -497,9 +510,9 @@ class Game(QMainWindow):
     def exit(self):
         self.stop()
         for el in self.labels:
-                el.hide()
-                el.outOfGame = False
-                el.wasClicked = False
+            el.hide()
+            el.outOfGame = False
+            el.wasClicked = False
         self.firstTime = True
         self.random_pic()
         self.mainMenu.show()
@@ -525,7 +538,7 @@ class MemoryTraining(QObject):
         self.mainMenu.setEnabled(False)
 
         self.winWindow = WinWindow()
-        
+
         self.game = Game()
         self.game.addMenu(self.mainMenu)
 
@@ -537,6 +550,7 @@ class MemoryTraining(QObject):
         self.autorization.addMenu(self.mainMenu)
         self.autorization.show()
         self.mainMenu.addAuto(self.autorization)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
