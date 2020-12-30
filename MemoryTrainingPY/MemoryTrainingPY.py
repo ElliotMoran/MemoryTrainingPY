@@ -457,7 +457,6 @@ class Game(QMainWindow):
                 sql.execute(
                     f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
                 db.commit()
-            if 0 == bestErrors:
                 sql.execute(
                     f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
                 db.commit()
