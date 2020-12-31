@@ -238,8 +238,8 @@
      <rect>
       <x>320</x>
       <y>210</y>
-      <width>681</width>
-      <height>271</height>
+      <width>700</width>
+      <height>270</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -284,6 +284,12 @@
           <property name="text">
            <string/>
           </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+          <property name="dragEnabled">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
        </layout>
@@ -315,6 +321,19 @@
        </widget>
       </item>
      </layout>
+    </widget>
+    <widget class="QCheckBox" name="checkBox">
+     <property name="geometry">
+      <rect>
+       <x>675</x>
+       <y>25</y>
+       <width>50</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </widget>
    <zorder>verticalLayoutWidget</zorder>

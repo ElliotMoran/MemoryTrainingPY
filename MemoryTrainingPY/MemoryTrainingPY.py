@@ -5,7 +5,7 @@ import sqlite3
 
 from PyQt5 import uic
 from PyQt5.Qt import pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QLineEdit
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
@@ -41,11 +41,18 @@ class Autorization(QWidget):
 
         self.registerButton.clicked.connect(self.register)
         self.loginButton.clicked.connect(self.login)
+        self.checkBox.stateChanged.connect(self.showHidePassword)
         self.userName = None
         self.move(10, 10)
 
     def getUserName(self):
         return self.userName
+
+    def showHidePassword(self):
+        if self.checkBox.checkState():
+            self.passEdit.setEchoMode(QLineEdit.Normal)
+        else:
+            self.passEdit.setEchoMode(QLineEdit.Password)
 
     # регистрация
     def register(self):
@@ -161,6 +168,7 @@ class MainMenu(QMainWindow):
         self.ratingButton.clicked.connect(self.showRating)
         self.changePasswordButton.clicked.connect(self.showPassChange)
         self.acceptButton.clicked.connect(self.passChange)
+        self.checkBox.stateChanged.connect(self.showHidePassword)
 
     def addAuto(self, auto):
         self.autorization = auto
@@ -175,6 +183,12 @@ class MainMenu(QMainWindow):
 
     def addGame(self, game):
         self.game = game
+
+    def showHidePassword(self):
+        if self.checkBox.checkState():
+            self.newPasswordEdit.setEchoMode(QLineEdit.Normal)
+        else:
+            self.newPasswordEdit.setEchoMode(QLineEdit.Password)
 
     # смена пароля
     def passChange(self):
