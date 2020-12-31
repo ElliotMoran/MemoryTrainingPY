@@ -42,6 +42,7 @@ class Autorization(QWidget):
         self.registerButton.clicked.connect(self.register)
         self.loginButton.clicked.connect(self.login)
         self.userName = None
+        self.move(10, 10)
 
     def getUserName(self):
         return self.userName
@@ -123,6 +124,7 @@ class WinWindow(QMainWindow):
         super().__init__()
         uic.loadUi('winWindow.ui', self)
         self.setFixedSize(740, 360)
+        self.move(10, 10)
 
         self.game = None
         self.exitButton.clicked.connect(self.exit)
@@ -135,12 +137,14 @@ class WinWindow(QMainWindow):
         self.game.exit()
 
 
+
 # окно главного меню
 class MainMenu(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('mainMenu.ui', self)
         self.setFixedSize(1280, 720)
+        self.move(0, 0)
 
         self.game = None
         self.userName = None
@@ -243,6 +247,7 @@ class Game(QMainWindow):
         super().__init__()
         uic.loadUi("game.ui", self)
         self.setFixedSize(1280, 720)
+        self.move(0, 0)
 
         self.userName = None
 
