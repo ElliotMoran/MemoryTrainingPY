@@ -319,10 +319,10 @@ class Game(QMainWindow):
         self.picPart_15.setName("15")
         self.picPart_16.setName("16")
 
-        self.pics = ["pics/auto1.png", "pics/auto2.png", "pics/auto3.png", "pics/auto4.png",
-                     "pics/auto5.png", "pics/auto6.png", "pics/auto7.png", "pics/auto8.png",
-                     "pics/auto1.png", "pics/auto2.png", "pics/auto3.png", "pics/auto4.png",
-                     "pics/auto5.png", "pics/auto6.png", "pics/auto7.png", "pics/auto8.png"]
+        self.pics = ["pics/auto1.jpeg", "pics/auto2.jpeg", "pics/auto3.jpeg", "pics/auto4.jpeg",
+                     "pics/auto5.jpeg", "pics/auto6.jpeg", "pics/auto7.jpeg", "pics/auto8.jpeg",
+                     "pics/auto1.jpeg", "pics/auto2.jpeg", "pics/auto3.jpeg", "pics/auto4.jpeg",
+                     "pics/auto5.jpeg", "pics/auto6.jpeg", "pics/auto7.jpeg", "pics/auto8.jpeg"]
 
         self.labels = [self.picPart_1, self.picPart_2, self.picPart_3, self.picPart_4,
                        self.picPart_5, self.picPart_6, self.picPart_7, self.picPart_8,
@@ -369,7 +369,7 @@ class Game(QMainWindow):
     # замена всех картинок picLabel на дефолтную
     def makeAllDefault(self):
         for el in self.labels:
-            el.setPixmap(QPixmap("pics/default.png"))
+            el.setPixmap(QPixmap("pics/default.jpeg"))
 
     # замена всех picLabel на их картинки
     def showAll(self):
@@ -390,11 +390,11 @@ class Game(QMainWindow):
                 self.reconnect(el.clicked, self.picClicked)
                 if el.outOfGame:
                     self.reconnect(el.clicked, self.nothing)
-                    el.setPixmap(QPixmap("pics/outofgame.png"))
+                    el.setPixmap(QPixmap("pics/outofgame.jpeg"))
             if not el1.outOfGame:
-                el1.setPixmap(QPixmap("pics/default.png"))
+                el1.setPixmap(QPixmap("pics/default.jpeg"))
             if not el2.outOfGame:
-                el2.setPixmap(QPixmap("pics/default.png"))
+                el2.setPixmap(QPixmap("pics/default.jpeg"))
         return func
 
     # функция выполняется если нажата picLabel(картинка)
@@ -491,7 +491,7 @@ class Game(QMainWindow):
             for el in self.labels:
                 if el.outOfGame:
                     self.reconnect(el.clicked, self.nothing)
-                    el.setPixmap(QPixmap("pics/outofgame.png"))
+                    el.setPixmap(QPixmap("pics/outofgame.jpeg"))
         self.timer.start(1000)
 
     def stop(self):
