@@ -34,7 +34,7 @@ class ClickedLabel(QLabel):
 class Autorization(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi('authorization.ui', self)
+        uic.loadUi('resources/ui/authorization.ui', self)
         self.setFixedSize(740, 360)
         self.mainMenu = None
         self.check = False
@@ -129,7 +129,7 @@ class Autorization(QWidget):
 class WinWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('winWindow.ui', self)
+        uic.loadUi('resources/ui/winWindow.ui', self)
         self.setFixedSize(740, 360)
         self.move(10, 10)
 
@@ -148,7 +148,7 @@ class WinWindow(QMainWindow):
 class MainMenu(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('mainMenu.ui', self)
+        uic.loadUi('resources/ui/mainMenu.ui', self)
         self.setFixedSize(1280, 720)
         self.move(0, 0)
 
@@ -259,7 +259,7 @@ class MainMenu(QMainWindow):
 class Game(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("game.ui", self)
+        uic.loadUi("resources/ui/game.ui", self)
         self.setFixedSize(1280, 720)
         self.move(0, 0)
 
@@ -338,10 +338,10 @@ class Game(QMainWindow):
         self.picPart_15.setName("15")
         self.picPart_16.setName("16")
 
-        self.pics = ["pics/auto1.jpeg", "pics/auto2.jpeg", "pics/auto3.jpeg", "pics/auto4.jpeg",
-                     "pics/auto5.jpeg", "pics/auto6.jpeg", "pics/auto7.jpeg", "pics/auto8.jpeg",
-                     "pics/auto1.jpeg", "pics/auto2.jpeg", "pics/auto3.jpeg", "pics/auto4.jpeg",
-                     "pics/auto5.jpeg", "pics/auto6.jpeg", "pics/auto7.jpeg", "pics/auto8.jpeg"]
+        self.pics = ["resources/pics/auto1.jpeg", "resources/pics/auto2.jpeg", "resources/pics/auto3.jpeg", "resources/pics/auto4.jpeg",
+                     "resources/pics/auto5.jpeg", "resources/pics/auto6.jpeg", "resources/pics/auto7.jpeg", "resources/pics/auto8.jpeg",
+                     "resources/pics/auto1.jpeg", "resources/pics/auto2.jpeg", "resources/pics/auto3.jpeg", "resources/pics/auto4.jpeg",
+                     "resources/pics/auto5.jpeg", "resources/pics/auto6.jpeg", "resources/pics/auto7.jpeg", "resources/pics/auto8.jpeg"]
 
         self.labels = [self.picPart_1, self.picPart_2, self.picPart_3, self.picPart_4,
                        self.picPart_5, self.picPart_6, self.picPart_7, self.picPart_8,
@@ -388,7 +388,7 @@ class Game(QMainWindow):
     # замена всех картинок picLabel на дефолтную
     def makeAllDefault(self):
         for el in self.labels:
-            el.setPixmap(QPixmap("pics/default.jpeg"))
+            el.setPixmap(QPixmap("resources/pics/default.jpeg"))
 
     # замена всех picLabel на их картинки
     def showAll(self):
@@ -409,11 +409,11 @@ class Game(QMainWindow):
                 self.reconnect(el.clicked, self.picClicked)
                 if el.outOfGame:
                     self.reconnect(el.clicked, self.nothing)
-                    el.setPixmap(QPixmap("pics/outofgame.jpeg"))
+                    el.setPixmap(QPixmap("resources/pics/outofgame.jpeg"))
             if not el1.outOfGame:
-                el1.setPixmap(QPixmap("pics/default.jpeg"))
+                el1.setPixmap(QPixmap("resources/pics/default.jpeg"))
             if not el2.outOfGame:
-                el2.setPixmap(QPixmap("pics/default.jpeg"))
+                el2.setPixmap(QPixmap("resources/pics/default.jpeg"))
         return func
 
     # функция выполняется если нажата picLabel(картинка)
@@ -510,7 +510,7 @@ class Game(QMainWindow):
             for el in self.labels:
                 if el.outOfGame:
                     self.reconnect(el.clicked, self.nothing)
-                    el.setPixmap(QPixmap("pics/outofgame.jpeg"))
+                    el.setPixmap(QPixmap("resources/pics/outofgame.jpeg"))
         self.timer.start(1000)
 
     def stop(self):
