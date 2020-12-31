@@ -137,7 +137,6 @@ class WinWindow(QMainWindow):
         self.game.exit()
 
 
-
 # окно главного меню
 class MainMenu(QMainWindow):
     def __init__(self):
@@ -187,6 +186,7 @@ class MainMenu(QMainWindow):
             sql.execute(
                 f"""UPDATE users SET password = '{userPassword}' WHERE login = '{self.userName}'""")
             db.commit()
+            self.errorsPasswordLabel.setText('Password changed successfully')
         else:
             self.errorsPasswordLabel.setText('Less than 6 symbols')
 
