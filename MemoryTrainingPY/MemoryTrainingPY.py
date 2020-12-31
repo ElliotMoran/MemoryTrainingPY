@@ -244,7 +244,7 @@ class MainMenu(QMainWindow):
         users = list(sql.fetchall())
         for i in range(len(users)):
             users[i] = list(users[i])
-        users.sort(key = lambda x: x[1])
+        users.sort(key=lambda x: x[1])
         for i in range(len(users)):
             for j in range(len(users[i])):
                 tempLine = QLineEdit(str(users[i][j]))
@@ -252,7 +252,7 @@ class MainMenu(QMainWindow):
                 tempLayout.addWidget(tempLine, i, j)
         tempWidget.setLayout(tempLayout)
         self.scrollArea.setWidget(tempWidget)
-        
+
     # показ кнопок настроек
     def showSettings(self):
         self.changePasswordButton.show()
