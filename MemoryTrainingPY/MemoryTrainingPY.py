@@ -80,7 +80,7 @@ class Autorization(QWidget):
             sql.execute(f"""SELECT login FROM users WHERE login = '{name}'""")
             if sql.fetchone() is None:
                 sql.execute(
-                    f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (name, password, 0, 0))
+                    f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (name, password, 99999, 99999))
                 db.commit()
                 self.check = True
                 self.userName = name
@@ -491,13 +491,6 @@ class Game(QMainWindow):
                 f"SELECT mistakes FROM users WHERE login = '{self.userName}'")
             bestErrors = sql.fetchone()
             bestErrors = int(list(bestErrors)[0])
-            if 0 == bestTime:
-                sql.execute(
-                    f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
-                db.commit()
-                sql.execute(
-                    f"UPDATE users SET mistakes = {self.errors} WHERE login = '{self.userName}'")
-                db.commit()
             if 1000 - bestTime - bestErrors * 5 < 1000 - self.sec - self.errors * 5:
                 sql.execute(
                     f"UPDATE users SET time = {self.sec} WHERE login = '{self.userName}'")
