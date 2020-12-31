@@ -5,7 +5,7 @@ import sqlite3
 
 from PyQt5 import uic
 from PyQt5.Qt import pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QLineEdit, QGridLayout
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
@@ -212,6 +212,7 @@ class MainMenu(QMainWindow):
 
     # показ рейтинга
     def showRating(self):
+        # показ лучшего результата авторизированного пользователя
         self.userName = self.autorization.getUserName()
         self.startButton.hide()
         self.settingsButton.hide()
@@ -234,6 +235,24 @@ class MainMenu(QMainWindow):
         self.timeLabel.setText("%02d:%02d:%02d" % (hour, minut, sec))
         self.errorsLabel.setText(str(bestErrors))
 
+        # показ рейтинг всех пользователей
+        tempLayout = QGridLayout()
+        tempWidget = QWidget()
+        users = list()
+        sql.execute(
+            f"SELECT login, time, mistakes FROM users")
+        users = list(sql.fetchall())
+        for i in range(len(users)):
+            users[i] = list(users[i])
+        users.sort(key = lambda x: x[1])
+        for i in range(len(users)):
+            for j in range(len(users[i])):
+                tempLine = QLineEdit(str(users[i][j]))
+                tempLine.setReadOnly(True)
+                tempLayout.addWidget(tempLine, i, j)
+        tempWidget.setLayout(tempLayout)
+        self.scrollArea.setWidget(tempWidget)
+        
     # показ кнопок настроек
     def showSettings(self):
         self.changePasswordButton.show()
