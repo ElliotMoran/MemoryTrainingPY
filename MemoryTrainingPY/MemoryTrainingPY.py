@@ -30,6 +30,7 @@ class ClickedLabel(QLabel):
     def getName(self):
         return self.name
 
+
 # окно авторизации
 class Autorization(QWidget):
     def __init__(self):
@@ -244,7 +245,8 @@ class MainMenu(QMainWindow):
         users = list(sql.fetchall())
         for i in range(len(users)):
             users[i] = list(users[i])
-        users.sort(key=lambda x: x[1])
+        users.sort(key=lambda x: 1000 - x[1] - x[2] * 5)
+        users.reverse()
         for i in range(len(users)):
             for j in range(len(users[i])):
                 tempLine = QLineEdit(str(users[i][j]))
@@ -293,10 +295,10 @@ class Game(QMainWindow):
 
         self.sec = 0
         self.timer = QTimer()
-        self.set_time()
+        self.setTime()
         self.timer.timeout.connect(self.counter)
 
-        self.random_pic()
+        self.randomPic()
         self.makeAllOff()
         self.makeAllDefault()
 
@@ -391,7 +393,7 @@ class Game(QMainWindow):
         self.winWindow = winWindow
 
     # перемешивание картинок
-    def random_pic(self):
+    def randomPic(self):
         random.shuffle(self.pics)
 
     # замена всех picLabel на работающую функцию
@@ -534,12 +536,9 @@ class Game(QMainWindow):
 
     def counter(self):
         self.sec += 1
-        self.set_time()
+        self.setTime()
 
-    def is_timer_active(self):
-        return self.timer.isActive()
-
-    def set_time(self):
+    def setTime(self):
         hour = self.sec / 3600
         minut = (self.sec % 3600) / 60
         sec = (self.sec % 3600) % 60
@@ -552,13 +551,13 @@ class Game(QMainWindow):
             el.outOfGame = False
             el.wasClicked = False
         self.firstTime = True
-        self.random_pic()
+        self.randomPic()
         self.mainMenu.show()
         self.timer.stop()
         self.sec = 0
         self.errors = 0
-        self.set_time()
-        self.random_pic()
+        self.setTime()
+        self.randomPic()
         self.makeAllDefault()
         self.wrongsNumber.display(self.errors)
         self.makeAllOff()

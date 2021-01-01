@@ -19,8 +19,8 @@
      <rect>
       <x>70</x>
       <y>0</y>
-      <width>591</width>
-      <height>301</height>
+      <width>590</width>
+      <height>300</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -29,7 +29,7 @@
        <property name="font">
         <font>
          <family>MV Boli</family>
-         <pointsize>23</pointsize>
+         <pointsize>22</pointsize>
         </font>
        </property>
        <property name="text">
@@ -87,7 +87,7 @@
          <property name="font">
           <font>
            <family>MV Boli</family>
-           <pointsize>21</pointsize>
+           <pointsize>22</pointsize>
           </font>
          </property>
          <property name="text">
