@@ -19,6 +19,12 @@
   <property name="windowTitle">
    <string>Authorization</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -36,10 +42,13 @@
         <property name="font">
          <font>
           <family>MV Boli</family>
-          <pointsize>16</pointsize>
+          <pointsize>18</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Nickname:</string>
@@ -51,8 +60,11 @@
         <property name="font">
          <font>
           <family>MV Boli</family>
-          <pointsize>12</pointsize>
+          <pointsize>15</pointsize>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
@@ -64,10 +76,13 @@
         <property name="font">
          <font>
           <family>MV Boli</family>
-          <pointsize>16</pointsize>
+          <pointsize>18</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Password:</string>
@@ -79,8 +94,11 @@
         <property name="font">
          <font>
           <family>MV Boli</family>
-          <pointsize>12</pointsize>
+          <pointsize>15</pointsize>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
        </widget>
       </item>
@@ -91,8 +109,11 @@
       <property name="font">
        <font>
         <family>MV Boli</family>
-        <pointsize>16</pointsize>
+        <pointsize>18</pointsize>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
       <property name="text">
        <string/>
@@ -106,8 +127,11 @@
         <property name="font">
          <font>
           <family>MV Boli</family>
-          <pointsize>16</pointsize>
+          <pointsize>20</pointsize>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Login</string>
@@ -119,8 +143,11 @@
         <property name="font">
          <font>
           <family>MV Boli</family>
-          <pointsize>16</pointsize>
+          <pointsize>20</pointsize>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Register</string>
@@ -136,9 +163,12 @@
     <rect>
      <x>695</x>
      <y>70</y>
-     <width>55</width>
-     <height>35</height>
+     <width>23</width>
+     <height>20</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>

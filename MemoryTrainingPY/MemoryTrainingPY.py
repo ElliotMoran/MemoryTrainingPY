@@ -32,6 +32,9 @@ class MemoryTraining(QObject):
 
 
 if __name__ == '__main__':
+    with open('resources/ui/theme.qss', 'r', encoding='utf-8') as file:
+        style_sheet = file.read()
     app = QApplication(sys.argv)
+    app.setStyleSheet(style_sheet)
     ex = MemoryTraining()
     sys.exit(app.exec_())
