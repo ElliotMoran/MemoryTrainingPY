@@ -1,3 +1,4 @@
+#! python3
 import sys
 import sqlite3
 from PyQt5.QtWidgets import QApplication
